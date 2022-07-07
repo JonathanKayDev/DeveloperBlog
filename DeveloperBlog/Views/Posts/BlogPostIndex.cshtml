@@ -1,0 +1,88 @@
+﻿@using BlogProject.Enums
+@using BlogProject.Services
+@using BlogProject.Models
+@using Microsoft.AspNetCore.Identity
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+
+@inject IImageService _imageService
+@inject UserManager<BlogUser> _userManager
+
+@model IPagedList<Post>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row gx-2 gx-lg-4 gy-4 justify-content-center">
+    @foreach (var post in Model)
+    {
+        // Is the logged in user the Author of the post?
+        var isAuthor = false;
+
+        if (User.Identity.IsAuthenticated)
+        {
+            isAuthor = (post.BlogUserId == _userManager.GetUserId(User));
+        }
+
+        <div class="col-sm-12 col-md-6 col-lg-4 mt-4">
+            <div class="card border-dark">
+                
+                <div class="m-4 text-center">
+                        
+                    <div class="bg-post-title">
+                        <hr class="card-hr">
+                        <h5 class="card-title text-light">@post.Title</h5>
+                        <hr class="card-hr">
+                    </div>
+                    <div>
+                        <p class="card-text">@post.Abstract <br /> - </p>
+                    </div>
+
+                    <br>
+                    <div class="text-center">
+                        <a class="btn btn-dark btn-sm btn-block mb-2" asp-action="Details" asp-controller="Posts" asp-route-slug="@post.Slug">
+                            Read More
+                        </a>
+                    </div>
+
+                    @if (User.IsInRole(BlogRole.Administrator.ToString()) || isAuthor)
+                    {
+                        <div class="text-center">
+                            <a class="btn btn-dark btn-sm btn-block mb-2" asp-action="Edit" asp-controller="Posts" asp-route-slug="@post.Slug">
+                                Edit Post
+                            </a>
+                        </div>
+                    }
+
+                </div>
+                <img class="card-img-bottom" src="@_imageService.DecodeImage(post.ImageData, post.ImageType)">
+            </div>
+        </div>
+                
+        <!-- Need to format string here since value is nullable-->
+        @* string formattedDate = @blog.Created.HasValue ? @blog.Created.Value.ToString("dd-MMM-yyyy") : "<not available>";*@
+
+    }
+
+ </div>
+
+<hr />
+
+<!-- Add paging controls here-->
+<div class="row">
+    <div class="col h3">
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        @Html.PagedListPager(Model, page => Url.Action("BlogPostIndex", new { id = Model.FirstOrDefault().BlogId, page = page}),
+            new PagedListRenderOptionsBase
+            {
+                LiElementClasses = new string[] { "page-item"},
+                PageClasses = new string[] { "page-link"}
+            })
+    </div>
+</div>
