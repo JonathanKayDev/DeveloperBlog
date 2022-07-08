@@ -10,16 +10,18 @@ namespace BlogProject.Services
 {
     public class DataService
     {
+        #region Properties
         // Add ability to talk to the Db with constructor injection
-
         private readonly ApplicationDbContext _dbContext;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<BlogUser> _userManager;
         private readonly AppSettings _appSettings;
+        #endregion
 
+        #region Constructor
         // Constructor
-        public DataService(ApplicationDbContext dbContext, 
-                           RoleManager<IdentityRole> roleManager, 
+        public DataService(ApplicationDbContext dbContext,
+                           RoleManager<IdentityRole> roleManager,
                            UserManager<BlogUser> userManager,
                            IOptions<AppSettings> appSettings)
         {
@@ -28,10 +30,12 @@ namespace BlogProject.Services
             _userManager = userManager;
             _appSettings = appSettings.Value;
         }
+        #endregion
 
 
         // Public Methods
 
+        #region Manage Data Async
         public async Task ManageDataAsync()
         {
             // Create the Db from the Migrations
@@ -43,10 +47,11 @@ namespace BlogProject.Services
             // 2: Seed a few users into the system
             await SeedUsersAsync();
         }
-
+        #endregion
 
         // Private Methods
 
+        #region Seed Roles Async
         private async Task SeedRolesAsync()
         {
             // If there are already Roles in the system, do nothing.
@@ -63,7 +68,9 @@ namespace BlogProject.Services
                 }
             }
         }
+        #endregion
 
+        #region Seed Users Async
         private async Task SeedUsersAsync()
         {
             // If there are already Users in the system, do nothing.
@@ -104,7 +111,8 @@ namespace BlogProject.Services
             await _userManager.CreateAsync(modUser, _appSettings.SiteModeratorCredentials.Password);
             await _userManager.AddToRoleAsync(modUser, BlogRole.Moderator.ToString());
 
-        }
+        } 
+        #endregion
 
 
     }

@@ -5,14 +5,20 @@ namespace BlogProject.Services
 {
     public class BlogSearchService
     {
-        // Constructor injection
-        private readonly ApplicationDbContext _context;
 
+        #region Properties
+        private readonly ApplicationDbContext _context;
+        #endregion
+
+        #region Constructor
+        // Constructor injection
         public BlogSearchService(ApplicationDbContext context)
         {
             _context = context;
         }
+        #endregion
 
+        #region Search
         public IQueryable<Post> Search(string searchTerm)
         {
             var posts = _context.Posts.Where(p => p.ReadyStatus == Enums.ReadyStatus.ProductionReady).AsQueryable();
@@ -35,7 +41,8 @@ namespace BlogProject.Services
 
             return posts.OrderByDescending(p => p.Created);
 
-        }
+        } 
+        #endregion
 
     }
 }

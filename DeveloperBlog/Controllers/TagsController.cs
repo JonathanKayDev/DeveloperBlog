@@ -14,13 +14,18 @@ namespace BlogProject.Controllers
 {
     public class TagsController : Controller
     {
+        #region Properties
         private readonly ApplicationDbContext _context;
+        #endregion
 
+        #region Constructor
         public TagsController(ApplicationDbContext context)
         {
             _context = context;
         }
+        #endregion
 
+        #region Index
         // GET: Tags
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
@@ -28,7 +33,9 @@ namespace BlogProject.Controllers
             var applicationDbContext = _context.Tags.Include(t => t.BlogUser).Include(t => t.Post);
             return View(await applicationDbContext.ToListAsync());
         }
+        #endregion
 
+        #region Details
         // GET: Tags/Details/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Details(int? id)
@@ -49,7 +56,9 @@ namespace BlogProject.Controllers
 
             return View(tag);
         }
+        #endregion
 
+        #region Create
         // GET: Tags/Create
         [Authorize(Roles = "Administrator")]
         public IActionResult Create()
@@ -76,7 +85,9 @@ namespace BlogProject.Controllers
             ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract", tag.PostId);
             return View(tag);
         }
+        #endregion
 
+        #region Edit
         // GET: Tags/Edit/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
@@ -132,7 +143,9 @@ namespace BlogProject.Controllers
             ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract", tag.PostId);
             return View(tag);
         }
+        #endregion
 
+        #region Delete
         // GET: Tags/Delete/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
@@ -164,10 +177,13 @@ namespace BlogProject.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        #endregion
 
+        #region Tag Exists
         private bool TagExists(int id)
         {
             return _context.Tags.Any(e => e.Id == id);
-        }
+        } 
+        #endregion
     }
 }

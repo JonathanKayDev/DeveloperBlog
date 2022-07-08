@@ -8,13 +8,18 @@ namespace BlogProject.Services
 {
     public class EmailService : IBlogEmailSender
     {
+        #region Properties
         private readonly MailSettings _mailSettings;
+        #endregion
 
+        #region Constructor
         public EmailService(IOptions<MailSettings> mailSettings)
         {
             _mailSettings = mailSettings.Value;
         }
+        #endregion
 
+        #region Send Contact Email Async
         public async Task SendContactEmailAsync(string emailFrom, string name, string subject, string htmlMessage)
         {
             var email = new MimeMessage();
@@ -35,7 +40,9 @@ namespace BlogProject.Services
 
             smtp.Disconnect(true);
         }
+        #endregion
 
+        #region Send Email Async
         public async Task SendEmailAsync(string emailTo, string subject, string htmlMessage)
         {
             var email = new MimeMessage();
@@ -57,6 +64,7 @@ namespace BlogProject.Services
             await smtp.SendAsync(email);
 
             smtp.Disconnect(true);
-        }
+        } 
+        #endregion
     }
 }

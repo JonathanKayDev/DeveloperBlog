@@ -15,35 +15,38 @@ namespace BlogProject.Controllers
 {
     public class CommentsController : Controller
     {
+        #region Properties
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BlogUser> _userManager;
+        #endregion
 
+        #region Constructor
         public CommentsController(ApplicationDbContext context, UserManager<BlogUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
+        #endregion
 
-        // GET: Comments
-        //public async Task<IActionResult> Index()
-        //{
-        //    var applicationDbContext = _context.Comments.Include(c => c.BlogUser).Include(c => c.Moderator).Include(c => c.Post);
-        //    return View(await applicationDbContext.ToListAsync());
-        //}
+        #region Moderated Index
         [Authorize(Roles = "Administrator, Moderator")]
         public async Task<IActionResult> ModeratedIndex()
         {
             var moderatedComments = await _context.Comments.Where(c => c.Moderated != null).ToListAsync();
-            return View("Index",moderatedComments);
+            return View("Index", moderatedComments);
         }
+        #endregion
 
+        #region Index
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
             var allComments = await _context.Comments.ToListAsync();
             return View("Index", allComments);
         }
+        #endregion
 
+        #region Details
         // GET: Comments/Details/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Details(int? id)
@@ -65,7 +68,9 @@ namespace BlogProject.Controllers
 
             return View(comment);
         }
+        #endregion
 
+        #region Create
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -86,7 +91,9 @@ namespace BlogProject.Controllers
 
             return View(comment);
         }
+        #endregion
 
+        #region Edit
         // GET: Comments/Edit/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
@@ -145,14 +152,16 @@ namespace BlogProject.Controllers
                 // (Action, Controller, Route, Fragment to scroll to)
                 return RedirectToAction("Details", "Posts", new { slug = newComment.Post.Slug }, "commentSection");
             }
-            
+
             //ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", comment.BlogUserId);
             //ViewData["ModeratorId"] = new SelectList(_context.Users, "Id", "Id", comment.ModeratorId);
             //ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract", comment.PostId);
-            
+
             return View(comment);
         }
+        #endregion
 
+        #region Moderate
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator,Moderator")]
@@ -194,6 +203,9 @@ namespace BlogProject.Controllers
             return View(comment);
         }
 
+        #endregion
+
+        #region Delete
         // GET: Comments/Delete/5
         [Authorize(Roles = "Administrator,Moderator")]
         public async Task<IActionResult> Delete(int? id)
@@ -224,14 +236,18 @@ namespace BlogProject.Controllers
             var comment = await _context.Comments.FindAsync(id);
             comment.Deleted = DateTime.UtcNow;
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index","Comments");
+            return RedirectToAction("Index", "Comments");
         }
+        #endregion
 
+        #region Comment Exists
         private bool CommentExists(int id)
         {
             return _context.Comments.Any(e => e.Id == id);
         }
+        #endregion
 
+        #region All Deleted
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AllDeleted()
         {
@@ -240,7 +256,9 @@ namespace BlogProject.Controllers
                 .ToListAsync();
             return View("DeletedIndex", allComments);
         }
+        #endregion
 
+        #region Permanent Delete
         [Authorize(Roles = "Administrator,Moderator")]
         public async Task<IActionResult> PermanentDelete(int? id)
         {
@@ -272,8 +290,8 @@ namespace BlogProject.Controllers
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
             return RedirectToAction("AllDeleted", "Comments");
-        }
-
+        } 
+        #endregion
 
     }
 }

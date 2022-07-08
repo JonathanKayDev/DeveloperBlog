@@ -2,11 +2,14 @@
 {
     public class BasicImageService : IImageService
     {
+        #region Content Type
         public string? ContentType(IFormFile file)
         {
             return file?.ContentType;
-        }
+        } 
+        #endregion
 
+        #region Decode Image
         public string? DecodeImage(byte[] data, string type)
         {
             if (data is null || type is null)
@@ -15,8 +18,10 @@
             }
 
             return $"data:image/{type};base64,{Convert.ToBase64String(data)}";
-        }
+        } 
+        #endregion
 
+        #region Encode Image Async
         public async Task<byte[]> EncodeImageAsync(IFormFile file)
         {
             if (file is null)
@@ -34,11 +39,14 @@
         {
             var file = $"{Directory.GetCurrentDirectory()}/wwwroot/img/{fileName}";
             return await File.ReadAllBytesAsync(file);
-        }
+        } 
+        #endregion
 
+        #region Size
         public int Size(IFormFile file)
         {
             return Convert.ToInt32(file?.Length);
-        }
+        } 
+        #endregion
     }
 }

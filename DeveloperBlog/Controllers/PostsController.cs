@@ -17,12 +17,15 @@ namespace BlogProject.Controllers
 {
     public class PostsController : Controller
     {
+        #region Properties
         private readonly ApplicationDbContext _context;
         private readonly ISlugService _slugService;
         private readonly IImageService _imageService;
         private readonly UserManager<BlogUser> _userManager;
         private readonly BlogSearchService _blogSearchService;
+        #endregion
 
+        #region Constructor
         public PostsController(ApplicationDbContext context, ISlugService slugService, IImageService imageService, UserManager<BlogUser> userManager, BlogSearchService blogSearchService)
         {
             _context = context;
@@ -31,7 +34,9 @@ namespace BlogProject.Controllers
             _userManager = userManager;
             _blogSearchService = blogSearchService;
         }
+        #endregion
 
+        #region Search Index
         public async Task<IActionResult> SearchIndex(int? page, string searchTerm)
         {
             ViewData["SearchTerm"] = searchTerm;
@@ -42,8 +47,9 @@ namespace BlogProject.Controllers
 
             return View(await posts.ToPagedListAsync(pageNumber, pageSize));
         }
+        #endregion
 
-
+        #region Index
         // GET: Posts
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
@@ -51,7 +57,9 @@ namespace BlogProject.Controllers
             var applicationDbContext = _context.Posts.Include(p => p.Blog).Include(p => p.BlogUser);
             return View(await applicationDbContext.ToListAsync());
         }
+        #endregion
 
+        #region Blog Post Index
         // BlogPostIndex
         public async Task<IActionResult> BlogPostIndex(int? id, int? page)
         {
@@ -77,7 +85,9 @@ namespace BlogProject.Controllers
             return View(await posts);
 
         }
+        #endregion
 
+        #region All Post Index
         // AllPostIndex
         public async Task<IActionResult> AllPostIndex(int? page)
         {
@@ -96,7 +106,9 @@ namespace BlogProject.Controllers
             return View(await posts);
 
         }
+        #endregion
 
+        #region Draft Post Index
         // DraftPostIndex
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DraftPostIndex(int? page)
@@ -116,7 +128,9 @@ namespace BlogProject.Controllers
             return View(await posts);
 
         }
+        #endregion
 
+        #region Details
         public async Task<IActionResult> Details(string slug)
         {
             if (string.IsNullOrEmpty(slug))
@@ -142,8 +156,9 @@ namespace BlogProject.Controllers
 
             return View(post);
         }
+        #endregion
 
-
+        #region Create
         // GET: Posts/Create
         [Authorize(Roles = "Administrator")]
         public IActionResult Create(int? id)
@@ -234,7 +249,9 @@ namespace BlogProject.Controllers
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", post.BlogUserId);
             return View(post);
         }
+        #endregion
 
+        #region Edit
         // GET: Posts/Edit/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(string slug)
@@ -339,7 +356,9 @@ namespace BlogProject.Controllers
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", post.BlogUserId);
             return View(post);
         }
+        #endregion
 
+        #region Delete
         // GET: Posts/Delete/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(string slug)
@@ -371,10 +390,13 @@ namespace BlogProject.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        #endregion
 
+        #region Post Exists
         private bool PostExists(int id)
         {
             return _context.Posts.Any(e => e.Id == id);
-        }
+        } 
+        #endregion
     }
 }

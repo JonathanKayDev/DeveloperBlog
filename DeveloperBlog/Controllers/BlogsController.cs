@@ -16,11 +16,14 @@ namespace BlogProject.Controllers
 {
     public class BlogsController : Controller
     {
+        #region Properties
         // Injected services
         private readonly ApplicationDbContext _context;
         private readonly IImageService _imageService;
         private readonly UserManager<BlogUser> _userManager;
+        #endregion
 
+        #region Constructor
         // Constructor injections
         public BlogsController(ApplicationDbContext context, IImageService imageService, UserManager<BlogUser> userManager)
         {
@@ -28,7 +31,9 @@ namespace BlogProject.Controllers
             _imageService = imageService;
             _userManager = userManager;
         }
+        #endregion
 
+        #region Index
         // GET: Blogs
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
@@ -36,7 +41,9 @@ namespace BlogProject.Controllers
             var applicationDbContext = _context.Blogs;//.Include(b => b.BlogUser);
             return View(applicationDbContext);//await applicationDbContext.ToListAsync());
         }
+        #endregion
 
+        #region Details
         // GET: Blogs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -55,7 +62,9 @@ namespace BlogProject.Controllers
 
             return View(blog);
         }
+        #endregion
 
+        #region Create
         // GET: Blogs/Create
         [Authorize(Roles = "Administrator")]
         public IActionResult Create()
@@ -85,7 +94,9 @@ namespace BlogProject.Controllers
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
             return View(blog);
         }
+        #endregion
 
+        #region Edit
         // GET: Blogs/Edit/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
@@ -100,7 +111,7 @@ namespace BlogProject.Controllers
             {
                 return NotFound();
             }
-            
+
             return View(blog);
         }
 
@@ -158,7 +169,9 @@ namespace BlogProject.Controllers
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
             return View(blog);
         }
+        #endregion
 
+        #region Delete
         // GET: Blogs/Delete/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
@@ -193,6 +206,7 @@ namespace BlogProject.Controllers
         private bool BlogExists(int id)
         {
             return _context.Blogs.Any(e => e.Id == id);
-        }
+        } 
+        #endregion
     }
 }

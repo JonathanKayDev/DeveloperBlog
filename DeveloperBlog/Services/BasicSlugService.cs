@@ -5,19 +5,26 @@ namespace BlogProject.Services
 {
     public class BasicSlugService : ISlugService
     {
+        #region Properties
         private readonly ApplicationDbContext _dbContext;
+        #endregion
 
+        #region Constructor
         public BasicSlugService(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
+        #endregion
 
+        #region Is Unique
         public bool IsUnique(string slug)
         {
             // Go to Db and see if any records already have the slug value
             return !_dbContext.Posts.Any(p => p.Slug == slug);
         }
+        #endregion
 
+        #region Url Friendly
         public string UrlFriendly(string title)
         {
             if (title == null) return "";
@@ -75,7 +82,9 @@ namespace BlogProject.Services
             else
                 return sb.ToString();
         }
+        #endregion
 
+        #region Remap International Char To Ascii
         private string RemapInternationalCharToAscii(char c)
         {
             string s = c.ToString().ToLowerInvariant();
@@ -155,6 +164,7 @@ namespace BlogProject.Services
             {
                 return "";
             }
-        }
+        } 
+        #endregion
     }
 }
