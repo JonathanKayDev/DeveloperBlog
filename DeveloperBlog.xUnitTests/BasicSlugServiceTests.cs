@@ -27,5 +27,16 @@ namespace DeveloperBlog.xUnitTests
 
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void TestUrlFriendly_RemoveSpaces()
+        {
+            string testTitle = "Test to remove white    space   ";
+            string expected = "test-to-remove-white-space";
+
+            var actual = _sut.UrlFriendly(testTitle);
+
+            Assert.Equal(expected, actual);
+        }
     }
 }
