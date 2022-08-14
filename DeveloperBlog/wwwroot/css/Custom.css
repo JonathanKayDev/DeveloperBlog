@@ -84,13 +84,13 @@ div.swal2-container.swal2-center.swal2-backdrop-show > div {
 /* BLOG POSTS */
 
 .bg-blog-title {
-    --bs-bg-opacity: 1;
-    background-color: rgb(0,120,235) !important;
+    /*--bs-bg-opacity: 0.5;*/
+    background-color: rgba(0,120,235,0.85) !important;
 }
 
 .bg-post-title {
-    --bs-bg-opacity: 1;
-    background-color: #52236b !important;
+    /*--bs-bg-opacity: 1;*/
+    background-color: rgba(82,35,107,0.85) !important;
 }
 
 /* Tool tips */
@@ -126,6 +126,13 @@ div.swal2-container.swal2-center.swal2-backdrop-show > div {
 
 .card-img-bottom {
     border-radius: 0rem 0rem .25rem .25rem;
+}
+
+.card-img {
+    background: no-repeat center center;
+    background-color: #6c757d;
+    background-size: cover;
+    background-attachment: scroll;
 }
 
 /* Technology icons */
