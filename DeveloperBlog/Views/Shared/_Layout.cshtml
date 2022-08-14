@@ -72,21 +72,24 @@
 
         <header class="masthead" style="background-image: url(@headerImage@ViewData["HeaderImage"])">
             <div class="container position-relative px-2">
-                <div class="row gx-2 justify-content-center">
+                <div class="row justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="site-heading">
                             <h1 class="">@mainText@ViewData["MainText"]</h1>
                             <span class="subheading">@subText@ViewData["SubText"]</span>
-                            <form asp-action="SearchIndex" asp-controller="Posts">
-                                <div class="input-group mt-5">
-                                    <input type="text" name="SearchTerm" class="form-control text-search" placeholder="Search Term">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-warning btn-block btn-sm btn-search" type="submit">Search</button>
-                                    </div>
-                                </div>
-                            </form>
-
                         </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <form asp-action="SearchIndex" asp-controller="Posts">
+                            <div class="input-group mt-5">
+                                <input type="text" name="SearchTerm" class="form-control text-search" placeholder="Search Term">
+                                <div class="input-group-append">
+                                    <button class="btn btn-warning btn-block btn-sm btn-search" type="submit">Search</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,5 @@
-﻿button.btn-sm, a.btn-sm {
+﻿
+button.btn-sm, a.btn-sm {
     line-height: 2;
     border-radius: 8px;
 }
