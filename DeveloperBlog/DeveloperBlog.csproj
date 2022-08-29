@@ -5,7 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-BlogProject-F867EFC0-6C2A-43A2-9372-4CA1EFEFE1C5</UserSecretsId>
+    <Platforms>AnyCPU;ARM64</Platforms>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\ConnectionService.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Remove="Views\Home\Privacy.cshtml" />

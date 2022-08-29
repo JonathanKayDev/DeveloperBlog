@@ -1,4 +1,5 @@
 ﻿using BlogProject.ViewModels;
+using DeveloperBlog.Services;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -10,12 +11,14 @@ namespace BlogProject.Services
     {
         #region Properties
         private readonly MailSettings _mailSettings;
+        private readonly SecretsService _secretsService;
         #endregion
 
         #region Constructor
-        public EmailService(IOptions<MailSettings> mailSettings)
+        public EmailService(IOptions<MailSettings> mailSettings, SecretsService secretsService)
         {
             _mailSettings = mailSettings.Value;
+            _secretsService = secretsService;
         }
         #endregion
 
@@ -23,8 +26,8 @@ namespace BlogProject.Services
         public async Task SendContactEmailAsync(string emailFrom, string name, string subject, string htmlMessage)
         {
             var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
-            email.To.Add(MailboxAddress.Parse(_mailSettings.Mail));
+            email.Sender = MailboxAddress.Parse(_secretsService.GetMailSettingsMail());
+            email.To.Add(MailboxAddress.Parse(_secretsService.GetMailSettingsMail()));
             email.Subject = subject;
 
             var builder = new BodyBuilder();
@@ -34,7 +37,7 @@ namespace BlogProject.Services
 
             using var smtp = new SmtpClient();
             smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+            smtp.Authenticate(_secretsService.GetMailSettingsMail(), _secretsService.GetMailSettingsPassword());
 
             await smtp.SendAsync(email);
 
@@ -46,7 +49,7 @@ namespace BlogProject.Services
         public async Task SendEmailAsync(string emailTo, string subject, string htmlMessage)
         {
             var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+            email.Sender = MailboxAddress.Parse(_secretsService.GetMailSettingsMail());
             email.To.Add(MailboxAddress.Parse(emailTo));
             email.Subject = subject;
 
@@ -59,7 +62,7 @@ namespace BlogProject.Services
 
             using var smtp = new SmtpClient();
             smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+            smtp.Authenticate(_secretsService.GetMailSettingsMail(), _secretsService.GetMailSettingsPassword());
 
             await smtp.SendAsync(email);
 

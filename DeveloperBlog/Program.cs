@@ -3,6 +3,7 @@ using BlogProject.Models;
 using BlogProject.Services;
 using BlogProject.ViewModels;
 using DeveloperBlog.Models.Settings;
+using DeveloperBlog.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = ConnectionService.GetConnectionString(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(ConnectionService.GetConnectionString(configuration))); // Beware - somehow a line was added automatically that tried to connect to original sql
+    options.UseNpgsql(connectionString)); // Beware - somehow a line was added automatically that tried to connect to original sql
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // CF tutorial
@@ -30,6 +31,8 @@ builder.Services.AddRazorPages();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 // Register my custom DataService class
 builder.Services.AddScoped<DataService>();
+// Register SecretsService
+builder.Services.AddTransient<SecretsService>();
 // Register a preconfigured instance of the MailSettings class
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IBlogEmailSender, EmailService>();

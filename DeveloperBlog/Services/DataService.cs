@@ -2,6 +2,7 @@
 using BlogProject.Enums;
 using BlogProject.Models;
 using DeveloperBlog.Models.Settings;
+using DeveloperBlog.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -16,6 +17,7 @@ namespace BlogProject.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<BlogUser> _userManager;
         private readonly AppSettings _appSettings;
+        private readonly SecretsService _secretsService;
         #endregion
 
         #region Constructor
@@ -23,12 +25,14 @@ namespace BlogProject.Services
         public DataService(ApplicationDbContext dbContext,
                            RoleManager<IdentityRole> roleManager,
                            UserManager<BlogUser> userManager,
-                           IOptions<AppSettings> appSettings)
+                           IOptions<AppSettings> appSettings, 
+                           SecretsService secretsService)
         {
             _dbContext = dbContext;
             _roleManager = roleManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
+            _secretsService = secretsService;
         }
         #endregion
 
@@ -83,8 +87,8 @@ namespace BlogProject.Services
             // Administrator
             var adminUser = new BlogUser()
             {
-                Email = _appSettings.SiteAdminCredentials.Email,
-                UserName = _appSettings.SiteAdminCredentials.Email,
+                Email = _secretsService.GetAdminEmail(),
+                UserName = _secretsService.GetAdminEmail(),
                 FirstName = _appSettings.SiteAdminCredentials.FirstName,
                 LastName = _appSettings.SiteAdminCredentials.LastName,
                 DisplayName = _appSettings.SiteAdminCredentials.DisplayName,
@@ -92,7 +96,7 @@ namespace BlogProject.Services
             };
 
             // Step 2: Use the UserManager to create a new user that is defined by the adminUser
-            await _userManager.CreateAsync(adminUser, _appSettings.SiteAdminCredentials.Password);
+            await _userManager.CreateAsync(adminUser, _secretsService.GetAdminPassword());
 
             // Step 3: Add this new user to the Administrator role
             await _userManager.AddToRoleAsync(adminUser, BlogRole.Administrator.ToString());
@@ -100,15 +104,15 @@ namespace BlogProject.Services
             // Moderator
             var modUser = new BlogUser()
             {
-                Email = _appSettings.SiteModeratorCredentials.Email,
-                UserName = _appSettings.SiteModeratorCredentials.Email,
+                Email = _secretsService.GetModeratorEmail(),
+                UserName = _secretsService.GetModeratorEmail(),
                 FirstName = _appSettings.SiteModeratorCredentials.FirstName,
                 LastName = _appSettings.SiteModeratorCredentials.LastName,
                 DisplayName = _appSettings.SiteModeratorCredentials.DisplayName,
                 EmailConfirmed = true,
             };
 
-            await _userManager.CreateAsync(modUser, _appSettings.SiteModeratorCredentials.Password);
+            await _userManager.CreateAsync(modUser, _secretsService.GetModeratorPassword());
             await _userManager.AddToRoleAsync(modUser, BlogRole.Moderator.ToString());
 
         } 
