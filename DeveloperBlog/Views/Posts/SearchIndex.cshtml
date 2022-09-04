@@ -1,46 +1,78 @@
 ﻿@using BlogProject.Models
 @using BlogProject.Services
 @using BlogProject.Enums
-
+@using Microsoft.AspNetCore.Identity
 @using X.PagedList
 @using X.PagedList.Mvc.Core
 @using X.PagedList.Web.Common
 
-
-@inject IImageService imageService
+@inject IImageService _imageService
+@inject UserManager<BlogUser> _userManager
 
 @model IPagedList<Post>
 
-<div class="row">
+@{
+    ViewData["Title"] = "Search";
+}
+
+<div class="row ms-1 me-1 justify-content-center">
     @foreach (var post in Model)
     {
-        <div class="col-sm-2 col-lg-4 mt-3">
-            <div class="card border-dark">
-                <div class="card-body text-center">
-                    <div class="bg-warning">
-                        <hr class="card-hr" />
-                        <h5 class="card-title">@post.Title</h5>
-                        <hr class="card-hr" />
+        // Is the logged in user the Author of the post?
+        var isAuthor = false;
+
+        if (User.Identity.IsAuthenticated)
+        {
+            isAuthor = (post.BlogUserId == _userManager.GetUserId(User));
+        }
+
+        <div class="col-12 col-md-6 col-lg-4 mt-4">
+            <div class="card border-dark bg-transparent shadow">
+
+                <div class="card-img" style="background-image: url(@_imageService.DecodeImage(post.ImageData, post.ImageType))">
+                    <div class="container position-relative px-4">
+                        <div class="bg-post-title text-center">
+                            <hr class="card-hr">
+                            <h5 class="card-title text-light">@post.Title</h5>
+                            <hr class="card-hr">
+                        </div>
                     </div>
+                </div>
+
+                <div class="m-4 text-center">
                     <div>
-                        <p class="card-text">@post.Abstract</p>
+                        <div class="card-text">@post.Abstract <br /> - </div>
                     </div>
 
-                    <br />
-                    <div class="text-center">
-                        <a class="btn btn-dark btn-sm btn-block mb-2" asp-action="Details" asp-controller="Posts" asp-route-slug="@post.Slug">Read More</a>
+                    <div class="text-center mt-4">
+                        <a class="btn btn-dark btn-sm btn-block mb-2" asp-action="Details" asp-controller="Posts" asp-route-slug="@post.Slug">
+                            Read More
+                        </a>
                     </div>
+
+                    @if (User.IsInRole(BlogRole.Administrator.ToString()) || isAuthor)
+                    {
+                        <div class="text-center">
+                            <a class="btn btn-dark btn-sm btn-block mb-2" asp-action="Edit" asp-controller="Posts" asp-route-slug="@post.Slug">
+                                Edit Post
+                            </a>
+                        </div>
+                    }
 
                 </div>
-                <img class="card-img-bottom" src="@imageService.DecodeImage(post.ImageData,  post.ImageType)" />
             </div>
-
         </div>
+
+        <!-- Need to format string here since value is nullable-->
+        @* string formattedDate = @blog.Created.HasValue ? @blog.Created.Value.ToString("dd-MMM-yyyy") : "<not available>";*@
+
     }
+
 </div>
 
 <hr />
 
+<!-- Add paging controls here-->
 <div class="row">
     <div class="col h3">
         Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
@@ -48,11 +80,11 @@
 </div>
 <div class="row">
     <div class="col">
-        @Html.PagedListPager(Model, page => Url.Action("SearchIndex", new { page = page, searchTerm = ViewData["SearchTerm"] }),
-            new PagedListRenderOptionsBase
-            {
-                LiElementClasses = new string[] { "page-item" },
-                PageClasses = new string[] { "page-link" }
-            })
+        @Html.PagedListPager(Model, page => Url.Action("AllPostIndex", new { page = page}),
+        new PagedListRenderOptionsBase
+        {
+            LiElementClasses = new string[] { "page-item"},
+            PageClasses = new string[] { "page-link"}
+        })
     </div>
 </div>

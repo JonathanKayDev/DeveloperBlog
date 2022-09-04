@@ -12,7 +12,7 @@
 @model IPagedList<Post>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "All Posts";
 }
 
 <div class="row ms-1 me-1 justify-content-center">
@@ -83,8 +83,8 @@
         @Html.PagedListPager(Model, page => Url.Action("AllPostIndex", new { page = page}),
         new PagedListRenderOptionsBase
         {
-        LiElementClasses = new string[] { "page-item"},
-        PageClasses = new string[] { "page-link"}
+            LiElementClasses = new string[] { "page-item"},
+            PageClasses = new string[] { "page-link"}
         })
     </div>
 </div>
