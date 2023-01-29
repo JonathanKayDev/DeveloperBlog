@@ -20,16 +20,21 @@
     {
         // Is the logged in user the Author of the post?
         var isAuthor = false;
-
         if (User.Identity.IsAuthenticated)
         {
             isAuthor = (post.BlogUserId == _userManager.GetUserId(User));
         }
 
+        var image = _imageService.DecodeImage(post.ImageData, post.ImageType);
+        if (image == null)
+        {
+            image = ViewData["HeaderImage"] as string;
+        }
+
         <div class="col-12 col-md-6 col-lg-4 mt-4">
             <div class="card border-dark bg-transparent shadow">
 
-                <div class="card-img" style="background-image: url(@_imageService.DecodeImage(post.ImageData, post.ImageType))">
+                <div class="card-img" style="background-image: url(@image)">
                     <div class="container position-relative px-4">
                         <div class="bg-post-title text-center">
                             <hr class="card-hr">

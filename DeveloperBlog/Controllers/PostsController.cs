@@ -150,7 +150,12 @@ namespace BlogProject.Controllers
                 return NotFound();
             }
 
-            ViewData["HeaderImage"] = _imageService.DecodeImage(post.ImageData, post.ImageType);
+            //If there's no post image, then get the blog image
+            var blog = _context.Blogs.Where(b => b.Id == post.BlogId).FirstOrDefault();
+            string postImage = _imageService.DecodeImage(post.ImageData, post.ImageType);
+            string image = postImage == null ? _imageService.DecodeImage(blog.ImageData, blog.ImageType) : postImage;
+
+            ViewData["HeaderImage"] = image;
             ViewData["MainText"] = post.Title;
             ViewData["SubText"] = post.Abstract;
 
@@ -170,7 +175,7 @@ namespace BlogProject.Controllers
             ViewData["SubText"] = blog.Description;
 
 
-            ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name");
+            ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name", blog.Id);
             //ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }

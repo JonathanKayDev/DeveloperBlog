@@ -1,4 +1,5 @@
-﻿@using BlogProject.Enums
+﻿@using BlogProject.Data
+@using BlogProject.Enums
 @using BlogProject.Services
 @using BlogProject.Models
 @using Microsoft.AspNetCore.Identity
@@ -8,6 +9,7 @@
 
 @inject IImageService _imageService
 @inject UserManager<BlogUser> _userManager
+@inject ApplicationDbContext _context;
 
 @model IPagedList<Post>
 
@@ -20,16 +22,22 @@
     {
         // Is the logged in user the Author of the post?
         var isAuthor = false;
-
         if (User.Identity.IsAuthenticated)
         {
             isAuthor = (post.BlogUserId == _userManager.GetUserId(User));
         }
 
+        var image = _imageService.DecodeImage(post.ImageData, post.ImageType);
+        if (image == null)
+        {
+            var blog = _context.Blogs.Where(b => b.Id == post.BlogId).FirstOrDefault();
+            image = _imageService.DecodeImage(blog.ImageData, blog.ImageType);
+        }
+
         <div class="col-12 col-md-6 col-lg-4 mt-4">
             <div class="card border-dark bg-transparent shadow">
 
-                <div class="card-img" style="background-image: url(@_imageService.DecodeImage(post.ImageData, post.ImageType))">
+                <div class="card-img" style="background-image: url(@image)">
                     <div class="container position-relative px-4">
                         <div class="bg-post-title text-center">
                             <hr class="card-hr">
