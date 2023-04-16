@@ -93,7 +93,7 @@ namespace BlogProject.Controllers
         {
 
             var pageNumber = page ?? 1;
-            var pageSize = 6;
+            var pageSize = 8;
 
             var posts = _context.Posts
                 .Where(p => p.ReadyStatus == Enums.ReadyStatus.ProductionReady)
