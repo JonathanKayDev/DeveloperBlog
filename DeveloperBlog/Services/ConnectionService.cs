@@ -10,9 +10,9 @@ namespace DeveloperBlog.Services
             //The default connection string will come from appSettings/secrets like usual
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            //Updated for AWS
-            //It will be automatically overwritten if we are running on AWS
-            var databaseUrl = Environment.GetEnvironmentVariable("RDS_HOSTNAME");
+            //Updated for Railway
+            //It will be automatically overwritten if we are running on railway
+            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
             return string.IsNullOrEmpty(databaseUrl) ? connectionString : BuildConnectionString(databaseUrl);
         }
@@ -23,11 +23,12 @@ namespace DeveloperBlog.Services
         {
             var builder = new NpgsqlConnectionStringBuilder
             {
-                Host = Environment.GetEnvironmentVariable("RDS_HOSTNAME"),
-                Port = Int32.Parse(Environment.GetEnvironmentVariable("RDS_PORT")),
-                Username = Environment.GetEnvironmentVariable("RDS_USERNAME"),
-                Password = Environment.GetEnvironmentVariable("RDS_PASSWORD"),
-                Database = Environment.GetEnvironmentVariable("RDS_DB_NAME"),
+                Host = Environment.GetEnvironmentVariable("PGHOST"),
+                Port = Int32.Parse(Environment.GetEnvironmentVariable("PGPORT")),
+                Username = Environment.GetEnvironmentVariable("PGUSER"),
+                Password = Environment.GetEnvironmentVariable("PGPASSWORD"),
+                Database = Environment.GetEnvironmentVariable("PGDATABASE"),
+
                 SslMode = SslMode.Require,
                 TrustServerCertificate = true
             };
